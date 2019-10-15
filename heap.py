@@ -61,5 +61,5 @@ class Heap(object):
         return self.heap[0]
 
     def add(self, element):
-        self.heap.append(element)
+        self.heap.append(element) 
         self._inv_heapify(len(self.heap) - 1)
