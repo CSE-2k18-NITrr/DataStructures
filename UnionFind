@@ -1,0 +1,82 @@
+/* Roushans Union Find Algo with better path compression
+ can be used to find the subset to which an element belongs or whether a vertex belongs to a component in a graph or not
+*/
+
+#include<iostream>
+#include<map>
+
+class Graph
+{
+	int V; // total vertices;
+	std::map<int, int> group; // gives group id of an element
+	std::map<int, int> parent; // gives parent of a particular groupid
+	int cur_id;
+public:
+	Graph(int V) {this->V = V; cur_id=1;}
+
+	int find(int x) // returns parent of element
+		{
+			int gid = group[x];
+			if (gid==0) return -1;
+			return parent[gid];
+		}
+
+	void Union(int x, int y)
+		{
+			int gidx, gidy, px, py;
+			px = find(x);
+			py = find(y);
+
+			if (px==py && px==-1) // both element dont have a group
+                {
+                	group[x] = cur_id;
+                    group[y] = cur_id;
+					parent[cur_id] = x; // doesn't matter who becomes parent for group
+					cur_id++;
+                        					
+				}
+			
+			else if (px==-1 && py!=-1) // x doesn't have a group
+				group[x] = group[y];
+			else if (px!=-1 && py==-1) // y doesn't have a group
+				group[y] = group[x];
+			
+			else if (px != py)
+				{
+					// change parent of x to parent of y or vice versa
+					gidx = group[x];
+					gidy = group[y];
+					parent[gidx] = parent[gidy];
+				}
+		}
+
+	void showContainerWith(int x)
+	{
+		// print all elements that are in the same group as x
+		int gidx = group[x], par, gidi, pari;
+		par = parent[gidx];
+
+		for(int i=1;i<=V;i++)
+			{
+				gidi = group[i];
+				pari = parent[gidi];
+				if (pari == par)
+					std::cout<< i <<" ";
+			}
+		std::cout<< "\n";
+	}
+};
+
+int main()
+{
+Graph g = Graph(8);
+g.Union(1,2);
+g.Union(3,4);
+g.Union(5,4);
+g.Union(1,4);
+g.Union(6,7);
+g.showContainerWith(1);
+g.showContainerWith(6);
+g.showContainerWith(8);
+return 0;
+}
